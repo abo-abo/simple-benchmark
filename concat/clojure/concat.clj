@@ -1,0 +1,5 @@
+(println "Clojure:")
+(def a (vec (range 1e7)))
+(def b (vec (range 1e7)))
+(time (def c (concat a b)))
+(time (reduce + c))

@@ -1,0 +1,73 @@
+* Intro
+These are my notes for measuring basic performance of several PLs.
+The benchmark is easy:
+1. allocate two arrays `a` and `b` of 0,1,...,1e7.
+2. concatenate them into `c`, measuring how long it takes.
+3. find the sum of `c`.
+
+I started this because I wanted to figure out how to make Clojure's
+speed on this task on par with Python. I still haven't figured out
+how.
+
+* Example output
+Running:
+#+begin_src sh
+# pip install pycook
+cook all
+#+end_src
+
+Gives:
+#+BEGIN_EXAMPLE
+--------------------------------------------------------------------------------
+Run:
+./cpp/concat.e
+sbcl --script sbcl/concat.lisp
+python3 python/concat.py
+java -cp java Concat
+clojure -e '(load-file "clojure/concat.clj")'
+cd clojure
+clojure -e '(load-file "concat1.clj")'
+--------------------------------------------------------------------------------
+C++:
+95ms
+cpp/concat.cc:49: info (big_concat)
+a.size(): 20000000
+17ms
+cpp/concat.cc:53: info (big_concat)
+sum: 99999990000000
+sbcl:
+59ms
+57ms
+sum: 99999990000000
+Python:
+196ms
+143ms
+sum: 99999990000000
+Java:
+toc(): 454ms
+toc(): 123ms
+sum: 99999990000000
+Clojure:
+"Elapsed time: 0.056444 msecs"
+"Elapsed time: 2493.874946 msecs"
+99999990000000
+Clojure1:
+"Elapsed time: 2914.489217 msecs"
+"Elapsed time: 38.213898 msecs"
+99999990000000
+#+END_EXAMPLE
+
+| PL        | alloc | reduce | total |
+|-----------+-------+--------+-------|
+| C++       |    95 |     17 |   112 |
+| SBCL      |    59 |     57 |   116 |
+| Python    |   196 |    143 |   339 |
+| Java      |   454 |    123 |   577 |
+| Clojure-1 |     0 |   2494 |  2494 |
+| Clojure-2 |  2914 |     38 |  2952 |
+#+TBLFM: $4=$2+$3
+Note that I didn't go out of my way at all to optimize any code (the
+Java code is especially sloppy). Still, Clojure shows good performance
+only on the reduce step when using arrays instead of vectors. But
+array construction takes 2.9 seconds. I wonder how this time could be
+improved.
