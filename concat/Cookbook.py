@@ -19,8 +19,10 @@ def clojure(recipe):
     return ["clojure -e '(load-file \"clojure/concat.clj\")'"]
 
 def clojure_1(recipe):
-    return ["cd clojure",
-            "clojure -e '(load-file \"concat1.clj\")'"]
+    return ["clojure -e '(load-file \"clojure/concat1.clj\")'"]
+
+def elisp(recipe):
+    return ["emacs -batch -l elisp/concat.el"]
 
 def all(recipe):
     return (
@@ -28,5 +30,6 @@ def all(recipe):
         sbcl(recipe) +
         python(recipe) +
         java(recipe) +
+        elisp(recipe) +
         clojure(recipe) +
         clojure_1(recipe))
